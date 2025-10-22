@@ -41,5 +41,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "useDefineForClassFields": false,
+    "noImplicitAny": false,
   }
 }
