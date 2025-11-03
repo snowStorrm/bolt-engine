@@ -1,6 +1,7 @@
 import { createCanvas, clearCanvas } from './bolt-main'
 import { Shader } from './bolt-shader'
 import { Buffer, BUFFER_TYPE } from './bolt-buffer'
-import { Color, COLOR_TYPE } from './bolt-color'
+import * as Color from './bolt-color'
+import { vec2, vec3, vec4 } from './bolt-vector'
 
-export { createCanvas, clearCanvas, Color, COLOR_TYPE, Shader, Buffer, BUFFER_TYPE }
+export { createCanvas, clearCanvas, Color, Shader, Buffer, BUFFER_TYPE, vec2, vec3, vec4 }

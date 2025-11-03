@@ -1,4 +1,4 @@
-import { Color } from './bolt-color'
+import * as Color from './bolt-color'
 
 export var boltGL: WebGL2RenderingContext | null;
 export var boltCanvas: HTMLCanvasElement; 
@@ -42,7 +42,7 @@ export function createCanvas(canvas?: HTMLCanvasElement, width?: number, height?
     ]
 }
 
-export function clearCanvas(col?: Color) {
+export function clearCanvas(col?: Color.LA | Color.RGBA | Color.CMYK | Color.HSV | Color.Hex) {
     let clearCol = (col) ? col.glCol : [0, 0, 0, 1];
     (boltGL!.clearColor as any)(...clearCol);
     boltGL!.clear(boltGL!.COLOR_BUFFER_BIT);

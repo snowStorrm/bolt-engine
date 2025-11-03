@@ -2,5 +2,5 @@ node_modules
 package-lock.json
 test.ts
 vite.config.ts
-bolt-engine/shaders/
 index.html
+bolt-engine/shaders/
