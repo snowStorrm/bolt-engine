@@ -5,11 +5,13 @@ Bolt is an in-development TypeScript-based WebGL2 rendering platform. Its goal i
 - [x] WebGL2 rendering context setup
 - [x] Custom vertex and fragment shader support via the Bolt.Shader class
     - Including array buffer support using the Bolt.Buffer class
-- [x] Grayscale, RGBA, HSVA, CMYKA, and Hex code color support via the Bolt.Color class
+- [x] RGB, CMYK, HSV, Hex, and Grayscale support with the Bolt.Color module
+- [x] 2-, 3-, and 4-dimensional vector support using the Bolt.Vector module
 ### Planned Support:
 - [ ] Pre-packaged primitive Bolt.Shader objects (triangles, circles, rectangles, etc)
-- [ ] Uniform setting via one function
-- [ ] Classes for vectors and matrices
+- [ ] Simplified uniform setting
+- [ ] Object-oriented matrixes and associated operations
+- [ ] Vector operations and full integration
 - [ ] Built-in animation support (you can still do this yourself though!)
 - [ ] A handful of accessible variables and conversion functions to simplify end-user programming
 
