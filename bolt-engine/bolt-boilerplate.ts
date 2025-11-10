@@ -1,8 +1,9 @@
 import { boltGL } from './bolt-main';
 import * as Color from './bolt-color';
+import { VectorArray } from './bolt-vector';
 
 export enum PROG_TYPE {VERTEX, FRAGMENT}
-export function createShaderProgram(src: string, type: PROG_TYPE) {
+export function createShaderProgram(src: string, type: PROG_TYPE): WebGLShader {
     const sType = (Number(type)==PROG_TYPE.VERTEX) ? boltGL!.VERTEX_SHADER :
                   (Number(type)==PROG_TYPE.FRAGMENT) ? boltGL!.FRAGMENT_SHADER :
                   -1;
@@ -15,14 +16,14 @@ export function createShaderProgram(src: string, type: PROG_TYPE) {
     } else throw new Error("Error creating new shader of type " + type.toString + ": type may be invalid.")
 }
 
-export function getBufferIndex(bufferArr: any, id: string) {
+export function getBufferIndex(bufferArr: any, id: string): number | undefined {
     for (let i:number = 0; i < bufferArr.length + 1; i++) {
         if (bufferArr[i].id == id) return i;
     }
-    return null;
+    return undefined;
 }
 
-export function transformColorToRGBA(col: Color.LA | Color.RGBA | Color.CMYK | Color.HSV | Color.Hex) {
+export function transformColorToRGBA(col: Color.LA | Color.RGBA | Color.CMYK | Color.HSV | Color.Hex): number[] {
     if (col instanceof Color.Hex) {
         let hexNoHash = col.hex!.replaceAll('#', '');
         let r = parseInt(hexNoHash.slice(0,2), 16)/255;
@@ -56,13 +57,23 @@ export function transformColorToRGBA(col: Color.LA | Color.RGBA | Color.CMYK | C
         }
         let constant = col.colArr[2]! - chroma;
         let rgbFinal = [rgbPrime[0]! + constant, rgbPrime[1]! + constant, rgbPrime[2]! + constant];
-        return [rgbFinal[0], rgbFinal[1], rgbFinal[2], col.colArr[3]!];
+        return [rgbFinal[0]!, rgbFinal[1]!, rgbFinal[2]!, col.colArr[3]!];
     }
     else return [1, 1, 1, 1];
 }
 
-export function testHexCodeForValidity(str: string) {
-    if (str.length < 6 || str.length > 7) throw new Error("Hex color'" + str + "'is not valid");
+export function testHexCodeForValidity(str: string): boolean {
+    if (str.length < 6 || str.length > 7) throw new Error("Error: Hex color'" + str + "'is not valid");
     else { for (let i = 0; i < str.length; i++) { if ('#0123456789abcdefABCDEF'.indexOf(String(str[i])) == -1) throw new Error("Hex color '" + str + "' is not valid") } } 
     return true;
+}
+
+export function isIdx(val: string): boolean { return !isNaN(Number(val)) }
+
+export function arrayForm(array: VectorArray): number[] {
+    let arr: number[] = [];
+    for (var i=0; i < array.vectorArray.length; i++) {
+        arr.push(...array.vectorArray[i]!.dimArr);
+    }
+    return arr;
 }

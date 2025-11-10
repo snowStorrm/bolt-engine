@@ -1,6 +1,7 @@
 import {boltGL} from './bolt-main.js';
 import {Buffer, BUFFER_TYPE} from './bolt-buffer.js';
 import {createShaderProgram, PROG_TYPE, getBufferIndex} from './bolt-boilerplate.js';
+import { VectorArray } from './bolt-vector.js';
 
 
 export class Shader {
@@ -23,15 +24,18 @@ export class Shader {
     }
 
     // Appends a Buffer object to this.buffers[]
-    addBuffer(id: string, data: number[], type?: BUFFER_TYPE) {
+    addBuffer(id: string, data: VectorArray): void;
+    addBuffer(id: string, data: number[], type: BUFFER_TYPE | undefined): void;
+    addBuffer(id: string, data: number[] | VectorArray, type?: BUFFER_TYPE): void {
         boltGL!.useProgram(this.program);
         boltGL!.bindVertexArray(this.vao);
         let attribLoc = boltGL!.getAttribLocation(this.program, id);
-        this.buffers.push(new Buffer(id, attribLoc, data, type));
+        if (data instanceof VectorArray) this.buffers.push(new Buffer(id, attribLoc, data));
+        else this.buffers.push(new Buffer(id, attribLoc, data as number[], type));
     }
     
     // Removes specified buffer
-    delBuffer(id: string) {
+    delBuffer(id: string): void {
         let idx = getBufferIndex(this.buffers, id);
         if (!idx) console.warn("Could not find buffer '" + id + "'. No buffers have been removed.");
         else {
@@ -41,22 +45,25 @@ export class Shader {
     }
 
     // Returns specified buffer
-    getBuffer(id: string) {
+    getBuffer(id: string): Buffer | undefined {
         let idx = getBufferIndex(this.buffers, id);
-        if (!idx) return null;
+        if (!idx) return undefined;
         else return this.buffers[idx];
     }
 
     // Sets data of specified buffer
-    setBuffer(id: string, data: number[]) {
+    setBuffer(id: string, data: number[] | VectorArray): void {
         let idx = getBufferIndex(this.buffers, id);
         if (idx == null) throw new Error("Attempting to set data on a nonexistant buffer!");
         else {
-            boltGL!.bindBuffer(this.buffers[idx]!.type!.bufferType, this.buffers[idx]!.glBuffer);
-            let dataArr = (this.buffers[idx]!.type!.dataType == boltGL!.FLOAT) ? new Float32Array(data) :
+            let T;
+            if (data instanceof VectorArray) { T = data.arrayForm(); }
+            else { T = data };
+            boltGL!.bindBuffer(this.buffers[idx]!.type.bufferType, this.buffers[idx]!.glBuffer);
+            let dataArr = (this.buffers[idx]!.type.dataType == boltGL!.FLOAT) ? new Float32Array(T) :
             (null);
-            boltGL!.bufferData(this.buffers[idx]!.type!.bufferType, dataArr, boltGL!.DYNAMIC_DRAW);
-            this.buffers[idx]!.numVertices = data.length/this.buffers[idx]!.type!.size;
+            boltGL!.bufferData(this.buffers[idx]!.type.bufferType, dataArr, boltGL!.DYNAMIC_DRAW);
+            this.buffers[idx]!.numVertices = T.length/this.buffers[idx]!.type.size;
         }
     }
     // TODO: rewrite uniformData as an object w/ type and data values
@@ -69,7 +76,7 @@ export class Shader {
 
     // Runs shader program once
     // Update vertices and call this each frame to animate stuff
-    draw() {
+    draw(): void {
         boltGL!.useProgram(this.program);
         boltGL!.bindVertexArray(this.vao);
         if (this.buffers.length == 0) throw new Error("Attempting to call Shader.draw() on a shader with no buffer data!");
